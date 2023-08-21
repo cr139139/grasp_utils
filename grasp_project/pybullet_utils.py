@@ -25,7 +25,7 @@ def get_point_cloud(width, height, view_matrix, proj_matrix):
     pixels = pixels[z < 0.999]
     s = s[z < 0.999]
 
-    pixels = pixels[s == 1]
+    pixels = pixels[s == 0]
 
     pixels[:, 2] = 2 * pixels[:, 2] - 1
 

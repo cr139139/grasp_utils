@@ -68,16 +68,21 @@ class RGPIS:
 
         return x, grad
 
-    def get_surface_points(self):
-        samples = 8
+    def get_surface_points(self, samples=8):
         x_min, x_max = self.X[:, 0].min(), self.X[:, 0].max()
         y_min, y_max = self.X[:, 1].min(), self.X[:, 1].max()
         z_min, z_max = self.X[:, 2].min(), self.X[:, 2].max()
         x_diff, y_diff, z_diff = (x_max - x_min) / 2, (y_max - y_min) / 2, (z_max - z_min) / 2
+        x_diff, y_diff, z_diff = 0, 0, 0
 
         xg, yg, zg = np.meshgrid(np.linspace(x_min - x_diff, x_max + x_diff, samples),
                                  np.linspace(y_min - y_diff, y_max + y_diff, samples),
-                                 np.linspace(z_min - z_diff, z_max + z_diff, samples))
+                                 np.linspace(z_min - z_diff, z_max + z_diff, samples * 3))
 
         x = np.concatenate([xg.reshape(-1, 1), yg.reshape(-1, 1), zg.reshape(-1, 1)], axis=1)
-        return self.ray_marching(x)
+        return self.ray_marching(x, iterations=10)
+
+    def get_var(self, x):
+        kxx = self.gp.get_matrix(x, x)
+        kxX = self.gp.get_matrix(x, self.X)
+        return kxx - kxX @ self.gp.apply_inverse(kxX.T)

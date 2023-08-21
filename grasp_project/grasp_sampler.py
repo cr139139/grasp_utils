@@ -9,7 +9,6 @@ class GraspSampler:
         self.gp = RGPIS()
 
     def sampler(self, points):
-        self.gp = RGPIS()
         self.gp.train(points)
         points, normals = self.gp.get_surface_points()
 
@@ -18,7 +17,7 @@ class GraspSampler:
         ort_inputs = {self.sess.get_inputs()[0].name: input}
         R, t, s, w = self.sess.run(None, ort_inputs)
 
-        mask = s[0] > 0.7
+        mask = s[0] > 0.5 # 0.7
         R = R[0, mask]
         t = t[0, mask]
         w = w[0, mask]

@@ -26,7 +26,8 @@ class SE3GMM:
         self.sigma[:, np.arange(6), np.arange(6)] += 1e-6
         N = (-3 * np.log(2 * np.pi) - 0.5 * np.log(np.linalg.det(self.sigma))[:, np.newaxis]
              - 0.5 * np.sum(log_mu @ np.linalg.inv(self.sigma) * log_mu, axis=2))
-        N = np.exp(N - np.max(N))
+        N_max = np.max(N)
+        N = np.exp(N - N_max)
         prob_x = np.sum(N * self.pi, axis=0)
         return prob_x
 

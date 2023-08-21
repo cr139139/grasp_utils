@@ -10,9 +10,12 @@ from grasp_sampler import GraspSampler
 
 model = GraspSampler()
 
+
 p.connect(p.GUI)
+# p.configureDebugVisualizer(rgbBackground=[0, 0, 0])
 p.setAdditionalSearchPath(pd.getDataPath())
-p.loadURDF('plane.urdf')
+p.resetDebugVisualizerCamera(1, 0, 0, [0, 0, 0])
+# p.loadURDF('plane.urdf')
 p.loadURDF('duck_vhacd.urdf', basePosition=[0.25, 0.0, 0.25], globalScaling=1.)
 p.setGravity(0, 0, 0)
 p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
@@ -42,32 +45,54 @@ points, H, w = model.sampler(points)
 from riem_gmm import SE3GMM
 
 gmm = SE3GMM()
-H = gmm.fit(H, n_clusters=3)
+H = gmm.fit(H, n_clusters=5, n_iterations=100)
 H = gmm.mu
 
 print(time.time() - start)
 import pytransform3d.trajectories
 
-T = pytransform3d.trajectories.exponential_coordinates_from_transforms(H[0:1])[0]
-target = np.zeros(6)
 T = np.zeros(6)
+# T[3] = 1
+# T[4] = 0.5
+# T[0] = -np.pi/2
+# T[1] = -np.pi/2
 
-for i in range(1000):
+for i in range(2000):
     grad = gmm.grad(T)
     norm = np.linalg.norm(grad)
     if norm == 0:
         norm = 1
-    diff = (T - target)
-    target = T
-    if i % 20 == 0:
+    if i % 50 == 0:
         draw_grasp_poses(pytransform3d.trajectories.transforms_from_exponential_coordinates(T[np.newaxis, :]),
                          color=[0, 1, 0])
-    T += 1e-2 * grad / norm
+    T[:3] += 1e-2 * grad[:3] / np.linalg.norm(grad[:3])
+    T[3:] += 1e-3 * grad[3:] / np.linalg.norm(grad[3:])
 
 T = pytransform3d.trajectories.transforms_from_exponential_coordinates(T[np.newaxis, :])
+draw_grasp_poses(T, color=[0, 0, 1])
+
+T = np.zeros(6)
+T[3] = 1
+T[4] = 0.5
+# T[0] = -np.pi/2
+# T[1] = -np.pi/2
+
+for i in range(2000):
+    grad = gmm.grad(T)
+    norm = np.linalg.norm(grad)
+    if norm == 0:
+        norm = 1
+    if i % 50 == 0:
+        draw_grasp_poses(pytransform3d.trajectories.transforms_from_exponential_coordinates(T[np.newaxis, :]),
+                         color=[0, 1, 0])
+    T[:3] += 1e-2 * grad[:3] / np.linalg.norm(grad[:3])
+    T[3:] += 1e-3 * grad[3:] / np.linalg.norm(grad[3:])
+
+T = pytransform3d.trajectories.transforms_from_exponential_coordinates(T[np.newaxis, :])
+draw_grasp_poses(T, color=[0, 0, 1])
+
 
 draw_grasp_poses(H)
-draw_grasp_poses(T, color=[0, 0, 1])
 draw_point_cloud(points)
 
 while True:
