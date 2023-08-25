@@ -10,7 +10,7 @@ class GraspSampler:
 
     def sampler(self, points):
         self.gp.train(points)
-        points, normals = self.gp.get_surface_points()
+        points, normals = self.gp.get_surface_points(samples=16)
 
         input = np.concatenate([points[np.newaxis, :, :, np.newaxis], normals[np.newaxis, :, :, np.newaxis]], axis=3)
         input = torch.from_numpy(input).to(torch.float).cpu().numpy()

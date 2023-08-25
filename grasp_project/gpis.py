@@ -4,10 +4,10 @@ import copy
 
 
 class RGPIS:
-    def __init__(self, l=0.3, noise=0.05):
+    def __init__(self, l=0.3, noise=0.05, dim=3):
         self.l = l
         self.noise = noise
-        self.kernel = george.kernels.ExpKernel(l ** 2, ndim=3)
+        self.kernel = george.kernels.ExpKernel(l ** 2, ndim=dim)
         self.gp = george.GP(self.kernel, solver=george.BasicSolver)
         self.model = None
         self.X = None
@@ -24,7 +24,7 @@ class RGPIS:
         return mu > np.exp(-0.002 / self.l)
 
     def reverting_function(self, x):
-        return - self.l * np.log(x)
+        return - self.l * np.log(x + 1e-6)
 
     def reverting_function_derivative(self, x):
         return - self.l / x
@@ -73,7 +73,7 @@ class RGPIS:
         y_min, y_max = self.X[:, 1].min(), self.X[:, 1].max()
         z_min, z_max = self.X[:, 2].min(), self.X[:, 2].max()
         x_diff, y_diff, z_diff = (x_max - x_min) / 2, (y_max - y_min) / 2, (z_max - z_min) / 2
-        x_diff, y_diff, z_diff = 0, 0, 0
+        # x_diff, y_diff, z_diff = 0, 0, 0
 
         xg, yg, zg = np.meshgrid(np.linspace(x_min - x_diff, x_max + x_diff, samples),
                                  np.linspace(y_min - y_diff, y_max + y_diff, samples),
