@@ -2,6 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/george" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ikflow_test/ikflow" vcs="Git" />
   </component>
 </project>

@@ -100,8 +100,8 @@ draw_point_cloud(points)
 gmm_grasp = SE3GMM()
 H_sample = gmm_grasp.fit(H, n_clusters=min(4, H.shape[0]), n_iterations=10)
 H_mu = gmm_grasp.mu
-
 prob = gmm_grasp.eval(H)
+
 draw_grasp_poses(H_mu, color=[1, 0., 0.], robot='kuka')
 # T = pytransform3d.trajectories.exponential_coordinates_from_transforms(robot.get_ee_transform())
 # for i in range(100):

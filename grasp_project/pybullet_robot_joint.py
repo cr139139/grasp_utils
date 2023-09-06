@@ -37,29 +37,29 @@ p.setAdditionalSearchPath(pd.getDataPath())
 p.resetDebugVisualizerCamera(1, 0, 0, [0, 0, 0])
 
 plane_id = p.loadURDF('plane.urdf', basePosition=[0., 0., -0.626], useFixedBase=True)
-# object_id = p.loadURDF('duck_vhacd.urdf', basePosition=[0.65, 0.0, 0.3], globalScaling=0.7)
+object_id = p.loadURDF('duck_vhacd.urdf', basePosition=[0.65, 0.0, 0.2], globalScaling=0.7)
 # object_id = p.loadURDF('../006_mustard_bottle/tsdf/textured.urdf', basePosition=[0.6, 0.0, 0.0],
 #                        baseOrientation=[0, 0, 0, 1], globalScaling=8, useFixedBase=False)
-filename = '../../ycb_dataset_mesh/ycb/014_lemon/google_16k/textured_convex.obj'
-
-import trimesh
-mesh = trimesh.load_mesh(filename)
-
-bounds = np.array(mesh.bounds)
-bounds = np.min(bounds[1] - bounds[0])
-if bounds > 0.04:
-    scale = 0.04 / bounds
-else:
-    scale = 1
-
-center_mass = np.array(mesh.center_mass) * scale
-
-collisionShapeId_VHACD = p.createCollisionShape(shapeType=p.GEOM_MESH,
-                                                fileName=filename, meshScale=[scale, scale, scale])
-object_id = p.createMultiBody(baseMass=0.1,
-                              baseCollisionShapeIndex=collisionShapeId_VHACD,
-                              basePosition=[0.65, 0.0, 0.2],
-                              baseInertialFramePosition=center_mass)
+# filename = '../../ycb_dataset_mesh/ycb/014_lemon/google_16k/textured_convex.obj'
+#
+# import trimesh
+# mesh = trimesh.load_mesh(filename)
+#
+# bounds = np.array(mesh.bounds)
+# bounds = np.min(bounds[1] - bounds[0])
+# if bounds > 0.04:
+#     scale = 0.04 / bounds
+# else:
+#     scale = 1
+#
+# center_mass = np.array(mesh.center_mass) * scale
+#
+# collisionShapeId_VHACD = p.createCollisionShape(shapeType=p.GEOM_MESH,
+#                                                 fileName=filename, meshScale=[scale, scale, scale])
+# object_id = p.createMultiBody(baseMass=0.1,
+#                               baseCollisionShapeIndex=collisionShapeId_VHACD,
+#                               basePosition=[0.65, 0.0, 0.2],
+#                               baseInertialFramePosition=center_mass)
 
 # table_id = p.loadURDF('/table/table.urdf', basePosition=[0.5, 0., -0.626], globalScaling=1., useFixedBase=True)
 # p.setGravity(0, 0, -9.81)
@@ -105,17 +105,17 @@ dtype = torch.float32
 chain = pk.build_serial_chain_from_urdf(open("KUKA_IIWA_URDF/iiwa7.urdf").read(), "iiwa_link_ee")
 chain = chain.to(dtype=dtype, device=device)
 q_orig = robot.get_joint_state()
-count = 500
 flag = False
 
 set_seed()
 ik_solver, hyper_parameters = get_ik_solver("iiwa7_full_temp_nsc_tpm")
 
 # draw_grasp_poses(H[:H.shape[0]//2], robot='kuka')
-n_repeat = 500 // H.shape[0]
-print(H.shape, n_repeat)
 
-H = torch.tensor(H, dtype=dtype, device=device).repeat(n_repeat, 1, 1)
+import time
+start = time.time()
+print(H.shape)
+H = torch.tensor(H[np.arange(2000) % H.shape[0]], dtype=dtype, device=device)
 ee = torch.cat([H[:, :3, 3], pk.matrix_to_quaternion(H[:, :3, :3])], dim=1)
 mask = torch.zeros(ee.size(0), dtype=torch.bool, device=device)
 
@@ -144,6 +144,7 @@ joint_gpis = RGPIS(dim=7)
 joint_gpis.train(q[mask, :].detach().numpy())
 
 print(robot.get_joint_state())
+print(time.time() - start)
 while True:
     q_curr = robot.get_joint_state()
     grad = joint_gpis.get_surface_normal(q_curr[np.newaxis, :])[0]

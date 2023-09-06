@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f8f1f4a4-9cf1-401c-a57f-867ecc4f75b2" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/grasp_project/joint_dynamic.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/grasp_project/object_move.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/grasp_project/task_dynamic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/grasp_utils.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/grasp_utils.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/grasp_project/pybullet_robot_joint.py" beforeDir="false" afterPath="$PROJECT_DIR$/grasp_project/pybullet_robot_joint.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/grasp_project/pybullet_robot_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/grasp_project/pybullet_robot_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ikflow_test/ikflow" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ikflow_test/ikflow/ikflow/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/ikflow_test/ikflow/ikflow/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ikflow_test/ikflow/ikflow/ikflow_solver.py" beforeDir="false" afterPath="$PROJECT_DIR$/ikflow_test/ikflow/ikflow/ikflow_solver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ikflow_test/ikflow/ikflow/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/ikflow_test/ikflow/ikflow/model.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2V1lNeAaii4NHC6wUvg2kwIKBLT" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f8f1f4a4-9cf1-401c-a57f-867ecc4f75b2" name="Changes" comment="" />
+      <created>1694011429050</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1694011429050</updated>
+    </task>
+    <servers />
+  </component>
+</project>
