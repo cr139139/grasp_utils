@@ -27,8 +27,7 @@ class SE3GMM:
         N = (-3 * np.log(2 * np.pi) - 0.5 * np.log(np.linalg.det(self.sigma))[:, np.newaxis]
              - 0.5 * np.sum(log_mu @ np.linalg.inv(self.sigma) * log_mu, axis=2))
         N_max = np.max(N)
-        N = np.exp(N - N_max)
-        prob_x = np.sum(N * self.pi, axis=0)
+        prob_x = np.sum(np.exp(N-N_max) * self.pi, axis=0)
         return prob_x
 
     def grad(self, x):
@@ -41,14 +40,14 @@ class SE3GMM:
                       x + np.array([0, 0, 0, 0, eps, 0]),
                       x + np.array([0, 0, 0, 0, 0, eps])], axis=0)
         X = pytransform3d.trajectories.transforms_from_exponential_coordinates(X)
-        grad = self.eval_temp(X)
-        grad = (grad[1:8] - grad[0:1]) / eps
-        return grad
+        prob = self.eval_temp(X)
+        grad = (prob[1:8] - prob[0:1]) / eps
+        return grad / (prob[0] + 1e-12)
 
     def em_step(self, x):
         N, log_mu = self.prob(x)
         r = N * self.pi
-        r = r / np.sum(r, axis=0, keepdims=True)
+        r = r / (np.sum(r, axis=0, keepdims=True) + 1e-6)
 
         pi_new = np.mean(r, axis=1, keepdims=True)
         u_new = np.sum(r[:, :, np.newaxis] * log_mu, axis=1) / np.sum(r, axis=1, keepdims=True)

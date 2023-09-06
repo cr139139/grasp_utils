@@ -7,29 +7,29 @@ import pytorch_kinematics as pk
 from ikflow.utils import set_seed
 from ikflow.model_loading import get_ik_solver
 
+# get Jacobian in parallel and use CUDA if available
+N = 1
+device = "cpu"
+dtype = torch.float32
+
 p.connect(p.GUI)
 robot = p.loadURDF("KUKA_IIWA_URDF/iiwa7.urdf")
 chain = pk.build_serial_chain_from_urdf(open("KUKA_IIWA_URDF/iiwa7.urdf").read(), "iiwa_link_ee")
 
-# get Jacobian in parallel and use CUDA if available
-N = 1
-d = "cpu"
-dtype = torch.float32
-
 set_seed()
 ik_solver, hyper_parameters = get_ik_solver("iiwa7_full_temp_nsc_tpm")
 
-chain = chain.to(dtype=dtype, device=d)
+chain = chain.to(dtype=dtype, device=device)
 
 batch = 1000
-q = torch.rand(batch, 7, dtype=dtype, device=d, requires_grad=True) * 0.1
-ee_e = torch.tensor([0.4, 0., 0.4, math.pi, 0, 0])[None, :].repeat((batch, 1))
+# q = torch.rand(batch, 7, dtype=dtype, device=device, requires_grad=True) * 0.1
+ee_e = torch.tensor([0.4, 0., 0.4, math.pi, 0, 0], device=device)[None, :].repeat((batch, 1))
 R = pk.axis_angle_to_matrix(ee_e[:, 3:])
 quat = pk.axis_angle_to_quaternion(ee_e[:, 3:])
-mask = torch.zeros(batch, dtype=torch.bool)
+mask = torch.zeros(batch, dtype=torch.bool, device=device)
 
 ee = torch.cat([ee_e[:, :3], quat], dim=1)
-mask = torch.zeros(ee_e.size(0), dtype=torch.bool)
+mask = torch.zeros(ee_e.size(0), dtype=torch.bool, device=device)
 
 import time
 
