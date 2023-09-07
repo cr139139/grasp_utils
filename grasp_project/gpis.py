@@ -29,6 +29,11 @@ class RGPIS:
     def reverting_function_derivative(self, x):
         return - self.l / x
 
+    def get_distance(self, x):
+        k = self.gp.get_matrix(x, self.X)
+        mu = k @ self.model
+        return self.reverting_function(mu)
+
     def get_surface_normal(self, x):
         k = self.gp.get_matrix(x, self.X)
         mu = k @ self.model

@@ -32,7 +32,7 @@ p.configureDebugVisualizer(rgbBackground=[0, 0, 0])
 p.setAdditionalSearchPath(pd.getDataPath())
 p.resetDebugVisualizerCamera(1, 0, 0, [0, 0, 0])
 
-plane_id = p.loadURDF('plane.urdf', basePosition=[0., 0., -0.626], useFixedBase=True)
+# plane_id = p.loadURDF('plane.urdf', basePosition=[0., 0., -0.626], useFixedBase=True)
 object_id = p.loadURDF('duck_vhacd.urdf', basePosition=[0.65, 0.0, 0.1], baseOrientation=[0.7071068, 0, 0, 0.7071068], globalScaling=0.7)
 
 p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
@@ -70,7 +70,7 @@ H = H[H_prob > 0.0005733336724437366]
 H = H[H[:, 2, 3] > 0.05]
 
 # draw_grasp_poses(H, color=[0.6, 0.6, 0.6], robot='kuka')
-draw_point_cloud(points)
+# draw_point_cloud(points)
 
 device = "cpu"
 dtype = torch.float32
@@ -98,7 +98,7 @@ def gpis_loop():
     global chain
 
     start = time.time()
-    print('gpis start')
+    # print('gpis start')
     joint_gpis_new = RGPIS(dim=7)
 
     H_ = torch.tensor(H[np.arange(100) % H.shape[0]], dtype=dtype, device=device)
@@ -132,6 +132,15 @@ def gpis_loop():
     print('gpis end', 1/(time.time() - start))
 
 
+def circular_path(index):
+    return [0.55 * math.cos(index * 0.005), 0.55 * math.sin(index * 0.005), 0.1]
+def linear_path(index):
+    return [0.65, 0.55 * math.sin(index * 0.01), 0.1]
+
+def sinusoidal_path(index):
+    return [0.1 * math.cos(index * 0.02) + 0.55, 0.55 * math.sin(index * 0.005), 0.1]
+
+
 import threading
 gpis_loop()
 
@@ -150,7 +159,7 @@ while True:
         p1 = threading.Thread(target=gpis_loop)
         p1.start()
 
-    pos_new = [0.65, 0.25 * math.sin(index * 0.01), 0.1]
+    pos_new = sinusoidal_path(index)
     orn_new = [0.7071068, 0, 0, 0.7071068]
     p.resetBasePositionAndOrientation(object_id, pos_new, orn_new)
     R_new = p.getMatrixFromQuaternion(orn_new)
@@ -164,7 +173,10 @@ while True:
 
     q_curr = robot.get_joint_state()
     grad = joint_gpis.get_surface_normal(q_curr[np.newaxis, :])[0]
-    robot.control_arm_poses(q_curr + grad * 0.1)
+    mean = joint_gpis.get_distance(q_curr[np.newaxis, :])[0, 0]
+
+    robot.control_arm_poses(q_curr + grad * min(.5, mean))
+
     p.stepSimulation()
     time.sleep(1/240.)
     T = T_new
