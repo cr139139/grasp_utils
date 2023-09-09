@@ -1,5 +1,5 @@
 import time
-
+import math
 import numpy as np
 import open3d as o3d
 import pybullet as p
@@ -26,12 +26,12 @@ ROLLING_FRICTION = 0.0001
 p.setPhysicsEngineParameter(fixedTimeStep=dt, numSolverIterations=SOLVER_STEPS,
                             useSplitImpulse=True, enableConeFriction=True,
                             splitImpulsePenetrationThreshold=0.0)
+
 p.resetSimulation()
 
 p.configureDebugVisualizer(rgbBackground=[0, 0, 0])
 p.setAdditionalSearchPath(pd.getDataPath())
-p.resetDebugVisualizerCamera(1, 0, 0, [0, 0, 0])
-
+p.resetDebugVisualizerCamera(cameraDistance=1.5, cameraYaw=60, cameraPitch=-15, cameraTargetPosition=[0., 0., 0.])
 # plane_id = p.loadURDF('plane.urdf', basePosition=[0., 0., -0.626], useFixedBase=True)
 object_id = p.loadURDF('duck_vhacd.urdf', basePosition=[0.65, 0.0, 0.1], baseOrientation=[0.7071068, 0, 0, 0.7071068], globalScaling=0.7)
 
@@ -133,12 +133,11 @@ def gpis_loop():
 
 
 def circular_path(index):
-    return [0.55 * math.cos(index * 0.005), 0.55 * math.sin(index * 0.005), 0.1]
+    return [0.45 * math.cos(index * 0.005), 0.45 * math.sin(index * 0.005), 0.2]
 def linear_path(index):
-    return [0.65, 0.55 * math.sin(index * 0.01), 0.1]
-
+    return [0.45, 0.45 * math.sin(index * 0.005), 0.1 * math.sin(index * 0.005) + 0.2]
 def sinusoidal_path(index):
-    return [0.1 * math.cos(index * 0.02) + 0.55, 0.55 * math.sin(index * 0.005), 0.1]
+    return [0.1 * math.cos(index * 0.05) + 0.45, 0.35 * math.sin(index * 0.005), 0.2]
 
 
 import threading
@@ -151,7 +150,15 @@ R = np.array(R).reshape((3, 3))
 T = np.eye(4)
 T[:3, :3] = R
 T[:3, 3] = pos
-import math
+
+trajectory = sinusoidal_path
+
+for i in range(int(math.pi / 0.005)):
+    print(i, int(math.pi / 0.005))
+    p.addUserDebugLine(trajectory(i), trajectory(i+1), lineColorRGB=[1, 0, 0])
+    p.addUserDebugLine(trajectory(-i), trajectory(-i - 1), lineColorRGB=[1, 0, 0])
+
+
 index = 0
 while True:
     if train_loop_flag:
@@ -159,8 +166,9 @@ while True:
         p1 = threading.Thread(target=gpis_loop)
         p1.start()
 
-    pos_new = sinusoidal_path(index)
-    orn_new = [0.7071068, 0, 0, 0.7071068]
+    pos_new = trajectory(index)
+    # orn_new = [0.7071068, 0, 0, 0.7071068]
+    orn_new = p.getQuaternionFromEuler([0.005 * index, 0, 0])
     p.resetBasePositionAndOrientation(object_id, pos_new, orn_new)
     R_new = p.getMatrixFromQuaternion(orn_new)
     pos_new = np.array(pos_new)

@@ -4,13 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f8f1f4a4-9cf1-401c-a57f-867ecc4f75b2" name="Changes" comment="">
+    <list default="true" id="f8f1f4a4-9cf1-401c-a57f-867ecc4f75b2" name="Changes" comment="first commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/grasp_project/gpis.py" beforeDir="false" afterPath="$PROJECT_DIR$/grasp_project/gpis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/grasp_project/joint_dynamic.py" beforeDir="false" afterPath="$PROJECT_DIR$/grasp_project/joint_dynamic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ikflow_test/ikflow/ikflow/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/ikflow_test/ikflow/ikflow/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ikflow_test/ikflow/ikflow/ikflow_solver.py" beforeDir="false" afterPath="$PROJECT_DIR$/ikflow_test/ikflow/ikflow/ikflow_solver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ikflow_test/ikflow/ikflow/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/ikflow_test/ikflow/ikflow/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/grasp_project/task_dynamic.py" beforeDir="false" afterPath="$PROJECT_DIR$/grasp_project/task_dynamic.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +48,18 @@
       <option name="presentableId" value="Default" />
       <updated>1694011429050</updated>
     </task>
+    <task id="LOCAL-00001" summary="first commit">
+      <created>1694113799917</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1694113799917</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="first commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="first commit" />
   </component>
 </project>

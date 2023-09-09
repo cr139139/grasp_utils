@@ -6,7 +6,7 @@ import pybullet as p
 import pybullet_data as pd
 import pytorch_kinematics as pk
 import torch
-
+import math
 from grasp_sampler import GraspSampler
 from ikflow.model_loading import get_ik_solver
 from ikflow.utils import set_seed
@@ -30,9 +30,9 @@ p.resetSimulation()
 
 p.configureDebugVisualizer(rgbBackground=[0, 0, 0])
 p.setAdditionalSearchPath(pd.getDataPath())
-p.resetDebugVisualizerCamera(1, 0, 0, [0, 0, 0])
+p.resetDebugVisualizerCamera(cameraDistance=1.5, cameraYaw=60, cameraPitch=-15, cameraTargetPosition=[0., 0., 0.])
 
-plane_id = p.loadURDF('plane.urdf', basePosition=[0., 0., -0.626], useFixedBase=True)
+# plane_id = p.loadURDF('plane.urdf', basePosition=[0., 0., -0.626], useFixedBase=True)
 object_id = p.loadURDF('duck_vhacd.urdf', basePosition=[0.55, 0.0, 0.2], baseOrientation=[0.7071068, 0, 0, 0.7071068],
                        globalScaling=0.7)
 
@@ -71,7 +71,7 @@ gmm_grasp = SE3GMM()
 H_sample = gmm_grasp.fit(H, n_clusters=min(4, H.shape[0]), n_iterations=10)
 
 # draw_grasp_poses(H, color=[0.6, 0.6, 0.6], robot='kuka')
-draw_point_cloud(points)
+# draw_point_cloud(points)
 
 device = "cpu"
 dtype = torch.float32
@@ -124,6 +124,12 @@ def gpis_loop():
     train_loop_flag = True
     print('gmm end', 1 / (time.time() - start))
 
+def circular_path(index):
+    return [0.45 * math.cos(index * 0.005), 0.45 * math.sin(index * 0.005), 0.2]
+def linear_path(index):
+    return [0.45, 0.45 * math.sin(index * 0.005), 0.1 * math.sin(index * 0.005) + 0.2]
+def sinusoidal_path(index):
+    return [0.1 * math.cos(index * 0.05) + 0.45, 0.35 * math.sin(index * 0.005), 0.2]
 
 import threading
 
@@ -136,7 +142,13 @@ R = np.array(R).reshape((3, 3))
 T = np.eye(4)
 T[:3, :3] = R
 T[:3, 3] = pos
-import math
+
+trajectory = linear_path
+
+for i in range(int(math.pi / 0.005)):
+    print(i, int(math.pi / 0.005))
+    p.addUserDebugLine(trajectory(i), trajectory(i+1), lineColorRGB=[1, 0, 0])
+    p.addUserDebugLine(trajectory(-i), trajectory(-i - 1), lineColorRGB=[1, 0, 0])
 
 index = 0
 while True:
@@ -145,8 +157,9 @@ while True:
         p1 = threading.Thread(target=gpis_loop)
         p1.start()
 
-    pos_new = [0.55, 0.25 * math.sin(index * 0.01), 0.2]
-    orn_new = [0.7071068, 0, 0, 0.7071068]
+    pos_new = trajectory(index)
+    # orn_new = [0.7071068, 0, 0, 0.7071068]
+    orn_new = p.getQuaternionFromEuler([0.005 * index, 0, 0])
     p.resetBasePositionAndOrientation(object_id, pos_new, orn_new)
     R_new = p.getMatrixFromQuaternion(orn_new)
     pos_new = np.array(pos_new)
